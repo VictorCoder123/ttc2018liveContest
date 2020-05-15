@@ -200,7 +200,7 @@
               </environmentVariables>
               <arguments>
                 <argument>-Xmx6G</argument>
-                <argument>-Xms6G</argument>
+                <argument>-Xms1G</argument>
                 <argument>-classpath</argument>
                 <!-- automatically creates the classpath using all project dependencies,
                      also adding the project build directory -->
@@ -227,7 +227,7 @@
               </environmentVariables>
               <arguments>
                 <argument>-Xmx6G</argument>
-                <argument>-Xms6G</argument>
+                <argument>-Xms1G</argument>
                 <argument>-classpath</argument>
                 <!-- automatically creates the classpath using all project dependencies,
                      also adding the project build directory -->
@@ -254,7 +254,7 @@
               </environmentVariables>
               <arguments>
                 <argument>-Xmx6G</argument>
-                <argument>-Xms6G</argument>
+                <argument>-Xms1G</argument>
                 <argument>-classpath</argument>
                 <!-- automatically creates the classpath using all project dependencies,
                      also adding the project build directory -->
