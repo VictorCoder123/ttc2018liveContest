@@ -1,7 +1,12 @@
 #!/bin/bash
 
-export PATH=$PATH:/home/qishen/ddlog/bin
-export DDLOG_HOME=/home/qishen/ddlog
+# export PATH=$PATH:/home/qishen/ddlog/bin
+
+# For compiled ddlog binary
+# export DDLOG_HOME=/home/qishen/.local/bin/ddlog
+
+# For ddlog compiled from source
+export DDLOG_HOME=/home/qishen/differential-datalog
 
 # Create runtime for socialnetwork domain
 ddlog -i snq1.dl && 
