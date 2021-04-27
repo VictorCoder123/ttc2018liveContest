@@ -10,5 +10,3 @@ edition = "2018"
 differential_datalog = {path = "../snq1_ddlog/differential_datalog"}
 snq1 = {path = "../snq1_ddlog/"}
 types = {path = "../snq1_ddlog/types"}
-value = {path = "../snq1_ddlog/value"}
-ddlog_rt = {path = "../snq1_ddlog/types/ddlog_rt"}

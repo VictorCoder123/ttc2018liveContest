@@ -1,0 +1,46 @@
+{
+  "Queries": [
+    "Q2"
+  ],
+  "Tools": ["differential", "differential-datalog"],
+  "ChangeSets": [
+    "1", "2", "4"
+  ],
+  "Sequences": 20,
+  "Runs": 1,
+  "Timeout": 60000
+}
+
+{
+  "Queries": [
+    "Q2"
+  ],
+  "Tools": ["differential", "differential-datalog"],
+  "ChangeSets": [
+    "1", "2", "4", "8", "16", "32", "64", "128", "256"
+  ],
+  "Sequences": 20,
+  "Runs": 1,
+  "Timeout": 60000
+}
+
+// Backup
+{
+  "Queries": [
+    "Q1", "Q2"
+  ],
+  "Tools": [
+    "differential", 
+    "differential-08", 
+    "differential-datalog", 
+    "EMFSolutionXtend",
+    "EMFSolutionViatra", 
+    "EMFSolutionYAMTL"
+  ],
+  "ChangeSets": [
+    "1", "2", "4", "8"
+  ],
+  "Sequences": 20,
+  "Runs": 1,
+  "Timeout": 6000
+}

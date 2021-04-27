@@ -1,13 +1,19 @@
 {
   "Queries": [
-    "Q1",
-    "Q2"
+    "Q1", "Q2"
   ],
-  "Tools": ["ExampleTool"],
+  "Tools": [
+    "differential", 
+    "differential-08", 
+    "differential-datalog", 
+    "EMFSolutionXtend",
+    "EMFSolutionViatra", 
+    "EMFSolutionYAMTL"
+  ],
   "ChangeSets": [
-    "1", "2"
+    "1", "2", "4", "8"
   ],
   "Sequences": 20,
   "Runs": 1,
-  "Timeout": 60
+  "Timeout": 6000
 }

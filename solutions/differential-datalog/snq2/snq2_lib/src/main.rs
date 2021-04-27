@@ -1,21 +1,24 @@
 use snq2_ddlog::api::HDDlog; //The DDLog Database engine itself
-use differential_datalog::DDlog; // A helper trait
+use snq2_ddlog::Relations;
+use snq2_ddlog::relid2name;
+
+// import all types defined by the datalog program itself
+use snq2_ddlog::typedefs::*;
+
+// Trait that must be implemented by an instance of a DDlog program. 
+// Type that represents a set of changes to DDlog relations.
+// Returned by `DDlog::transaction_commit_dump_changes()`.
+use differential_datalog::{
+    DDlog, 
+    DDlogDynamic, 
+    DDlogInventory
+}; 
 use differential_datalog::DeltaMap; // A trait representing the changes resulting from a given update.
 use differential_datalog::ddval::DDValue; // A generic DLog value type
 use differential_datalog::ddval::DDValConvert; //Another helper trair
 use differential_datalog::program::RelId; // Numeric relations id
 use differential_datalog::program::Update; // A type representing updates to the database
 use differential_datalog::record::{FromRecord, IntoRecord, Record}; // A type representing individual facts
-
-
-// import all types defined by the datalog program itself
-use types::*;
-// use types::ddlog_std::Ref;
-
-// import some helpers to access the database
-use value::relid2name; //maps the relation id to a string 
-use value::Relations; //Enum of available relations 
-use value::Value; // wrapper type for the input/output relations
 
 pub struct DDLogSNQ2{
     hddlog: HDDlog,
@@ -24,17 +27,17 @@ pub struct DDLogSNQ2{
 impl DDLogSNQ2 {
     pub fn new()  -> Result<DDLogSNQ2, String> {
         // callback is useless  
-        fn cb(_rel: usize, _rec: &Record, _w: isize) {}
+        // fn cb(_rel: usize, _rec: &Record, _w: isize) {}
         let number_threads = 1;
         let track_complet_snapshot = false;
-        let (hddlog, _init_state) = HDDlog::run(number_threads, track_complet_snapshot, cb)?;
+        let (hddlog, _init_state) = HDDlog::run(number_threads, track_complet_snapshot)?;
 
         return Ok(Self{hddlog});
     }
 
     pub fn flush_updates(&mut self, updates: Vec<Update<DDValue>>) -> Result<DeltaMap<DDValue>, String> {
         self.hddlog.transaction_start()?;
-        self.hddlog.apply_valupdates(updates.into_iter())?;
+        self.hddlog.apply_updates(&mut updates.into_iter())?;
         let delta = self.hddlog.transaction_commit_dump_changes()?;
         
         return Ok(delta); 
@@ -47,7 +50,7 @@ impl DDLogSNQ2 {
             let name = drains.next().unwrap(); 
             Update::Insert {
                 relid: Relations::User as RelId,
-                v: Value::User(types::User { id: id, name: name }).into_ddvalue(),
+                v: User { id: id, name: name }.into_ddvalue(),
             }
         }).collect::<Vec<_>>();
 
@@ -61,7 +64,7 @@ impl DDLogSNQ2 {
             let dst_comment = drains.next().unwrap().parse::<u64>().expect("Must be a number");
             Update::Insert {
                 relid: Relations::Likes as RelId,
-                v: Value::Likes(types::Likes { srcUser: src_user, dstComment: dst_comment }).into_ddvalue(),
+                v: Likes { srcUser: src_user, dstComment: dst_comment }.into_ddvalue(),
             }
         }).collect::<Vec<_>>();
 
@@ -75,7 +78,7 @@ impl DDLogSNQ2 {
             let dst = drains.next().unwrap().parse::<u64>().expect("Must be a number");
             Update::Insert {
                 relid: Relations::Friend as RelId,
-                v: Value::Friend(types::Friend { src, dst }).into_ddvalue(),
+                v: Friend { src, dst }.into_ddvalue(),
             }
         }).collect::<Vec<_>>();
 
@@ -91,12 +94,12 @@ impl DDLogSNQ2 {
             let creator = drains.next().unwrap().parse::<u64>().expect("Must be a number");
             Update::Insert {
                 relid: Relations::Posts as RelId,
-                v: Value::Posts(types::Posts { 
+                v: Posts { 
                     id: post_id, 
                     timestamp: timestamp, 
                     content: content, 
                     submitter: creator
-                }).into_ddvalue(),
+                }.into_ddvalue(),
             }
         }).collect::<Vec<_>>();
 
@@ -116,14 +119,14 @@ impl DDLogSNQ2 {
             let post_id = drains.next().unwrap().parse::<u64>().expect("Must be a number");
             Update::Insert {
                 relid: Relations::Comments as RelId,
-                v: Value::Comments(types::Comments { 
+                v: Comments { 
                     id: comment_id, 
                     timestamp: timestamp, 
                     content: content,
                     creator: creator_id,
                     parent: parent_id,
                     post: post_id
-                }).into_ddvalue(),
+                }.into_ddvalue(),
             }
         }).collect::<Vec<_>>();
 
