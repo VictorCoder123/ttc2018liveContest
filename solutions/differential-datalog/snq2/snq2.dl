@@ -2,7 +2,7 @@ import graph as graph
 
 // `id` must be u64 because some ids use very big numbers.
 input relation User(id: u64, name: string)
-input relation Comments(id: u64, timestamp: string, content: string, creator: u64, parent: u64, post: u64)
+input relation Comments(id: u64, timestamp: string, content: string, creator: u64, parent: u64)
 input relation Posts(id: u64, timestamp: string, content: string, submitter: u64)
 
 input relation Submitter(postid: u64, userid: u64)
@@ -43,7 +43,7 @@ output relation Top3CommentScore(first: u64, second: u64, third: u64)
 
 // 2. Use transformer to express SCC with native differential-dataflow implementation directly applied on some relations.
 // What if only two comments are liked but we need three top scores? If you comment then I assume you like your own comment.
-UserLikesNode(u, cid) :- Comments(cid, _, _, u, _, _). //, not Likes(u, cid). 
+UserLikesNode(u, cid) :- Comments(cid,_,_,u,_). //, not Likes(u, cid). 
 UserLikesNode(u, cid) :- Likes(u, cid).
 
 // Add self-loop to every node in the graph.
@@ -80,13 +80,13 @@ SCCScore(sum, unique_comment) :- SCC(likes_anchor, size),
     (var unique_comment, var sum) = aggregation
     .
 
-SCCScoreTimestamp(score, timestamp, comment) :- SCCScore(score, comment), Comments(comment, timestamp, _, _, _, _).
+SCCScoreTimestamp(score, timestamp, comment) :- SCCScore(score, comment), Comments(comment, timestamp,_,_,_).
 
 // An extern function that returns the top three items as option in the group.
 extern function top_three(g: Group<'K, 'V>): ('V, 'V, 'V)
 
 Top3CommentScore(first, second, third) :- SCCScoreTimestamp(score, timestamp, comment),
-    Comments(comment, timestamp, _, _, _, _),
+    Comments(comment, timestamp, _, _, _),
     var aggregation = Aggregate((), top_three(comment)),
     (var first, var second, var third) = aggregation
     .

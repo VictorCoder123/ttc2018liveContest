@@ -113,8 +113,6 @@ impl DDLogSNQ1 {
             let creator_id = drains.next().unwrap().parse::<u64>().expect("Must be a number");
             // Comment can comment on other comments so the parent could be either post or comment.
             let parent_id = drains.next().unwrap().parse::<u64>().expect("Must be a number");
-            // The root of the comment is always a post.
-            let post_id = drains.next().unwrap().parse::<u64>().expect("Must be a number");
             Update::Insert {
                 relid: Relations::Comments as RelId,
                 v: Comments { 
@@ -122,8 +120,7 @@ impl DDLogSNQ1 {
                     timestamp: timestamp, 
                     content: content,
                     creator: creator_id,
-                    parent: parent_id,
-                    post: post_id
+                    parent: parent_id
                 }.into_ddvalue(),
             }
         }).collect::<Vec<_>>();
@@ -252,7 +249,6 @@ fn main() {
     timer = std::time::Instant::now();
 
     for round in 1 .. (sequences + 1) {
-        // Insert new records!
         let filename = format!("{}change{:02}.csv", path, round);
         let changes = load_data(&filename);
         let mut sequence_updates = vec![];

@@ -26,8 +26,6 @@ pub struct DDLogSNQ2{
 
 impl DDLogSNQ2 {
     pub fn new()  -> Result<DDLogSNQ2, String> {
-        // callback is useless  
-        // fn cb(_rel: usize, _rec: &Record, _w: isize) {}
         let number_threads = 1;
         let track_complet_snapshot = false;
         let (hddlog, _init_state) = HDDlog::run(number_threads, track_complet_snapshot)?;
@@ -115,8 +113,6 @@ impl DDLogSNQ2 {
             let creator_id = drains.next().unwrap().parse::<u64>().expect("Must be a number");
             // Comment can comment on other comments so the parent could be either post or comment.
             let parent_id = drains.next().unwrap().parse::<u64>().expect("Must be a number");
-            // The root of the comment is always a post.
-            let post_id = drains.next().unwrap().parse::<u64>().expect("Must be a number");
             Update::Insert {
                 relid: Relations::Comments as RelId,
                 v: Comments { 
@@ -124,8 +120,7 @@ impl DDLogSNQ2 {
                     timestamp: timestamp, 
                     content: content,
                     creator: creator_id,
-                    parent: parent_id,
-                    post: post_id
+                    parent: parent_id
                 }.into_ddvalue(),
             }
         }).collect::<Vec<_>>();
@@ -245,7 +240,6 @@ fn main() {
     // println!("Execution time: {}", timer.elapsed().as_millis());
 
     for round in 1 .. (sequences + 1) {
-        // Insert new records!
         let filename = format!("{}change{:02}.csv", path, round);
         let changes = load_data(&filename);
         let mut sequence_updates = vec![];

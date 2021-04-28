@@ -1,13 +1,21 @@
 #!/bin/bash
 
+ddlog_solution_dir=$(dirname $(dirname $(realpath $0)))
+
+# Download ddlog v0.39.0 from Github repository.
+export DDLOG_HOME=$ddlog_solution_dir/ddlog
+echo DDLOG_HOME is set to $DDLOG_HOME
+
+chmod +x $DDLOG_HOME/bin/ddlog
+echo The location of ddlog binary is $(which $DDLOG_HOME/bin/ddlog)
+
 # For compiled ddlog binary
 # export DDLOG_HOME=$HOME/.local/bin/ddlog
-
 # For ddlog compiled from source and change the path if the source code is in a different directory.
-export DDLOG_HOME=$HOME/differential-datalog
+# export DDLOG_HOME=$HOME/differential-datalog
 
 # Create runtime for socialnetwork domain
-ddlog -i snq2.dl && 
+$DDLOG_HOME/bin/ddlog -i snq2.dl && 
 # Open the folder and build the runtime in Rust
 (cd snq2_ddlog && cargo build --release) #&& 
 
